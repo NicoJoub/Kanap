@@ -7,7 +7,8 @@ let localStorageProduct = JSON.parse(localStorage.getItem("panier"));
 console.log(localStorageProduct)
 
 //------------------ ETAPE 2 : Recup les infos manquantes ------------------// 
-
+//--Envoi une requete au serveur pour récupérer les informations d'un produit spécifique en fonction de l'id afin d'avoir l'ensemble des infos notament 
+//-- celles nons présentes dans le localstorage. 
 async function getOneProduct(id) {
   let response = await fetch(`http://localhost:3000/api/products/` + id)
   if (response.ok) {
@@ -26,9 +27,9 @@ async function displayProduct() {
   const fragment = document.createDocumentFragment()
   // pour chaque pdt du mis dans le local storage je vais incrémenter le HTML au sein de la page 
   for (const product of localStorageProduct) {
-    // Creation de la variable pour récupérer le produit concerné 
+    // Creation de la variable pour récupérer le produit concerné et l'ensemble des infos manquantes 
     let infoProduct = await getOneProduct(product.id);
-    // creation de la variable article pour integrer l'ensemble des elements données sur la page 
+    // creation de la variable article pour integrer l'ensemble des elements données sur la page, on crée l'element article 
     let article = document.createElement("article");
     // on paramèttre la balise article en lui donnant sa class et les data dont il a besoin
     article.className = "cart__item"
@@ -54,7 +55,7 @@ async function displayProduct() {
                     </div>
                   </div>
                 </div>`
-    // creation des elements innerHTML au sein de la balise invisible
+    // creation des elements innerHTML au sein de la balise invisible 
     fragment.appendChild(article);
   }
   // integration des elements HTML de la variable cartContenair qui correspond a Carte__items du HTML 
@@ -103,7 +104,7 @@ function changeQuantity() {
             console.log(localStorageProduct)
             alert(`La quantité de votre panier a été modifiée`)
             // recharger la page 
-            totalPrice();
+            totalPrice(); //-- fonction déclarer plus bas avec la fonction nombre de produit et prix --// 
             getNumberProduct(localStorageProduct)
           }
         }
@@ -185,6 +186,8 @@ const regexAddress = new RegExp("^[A-Za-z0-9àâäéèêëïîôöùûüç\\-':\
 const regexCity = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç'-\\s]{2,50}$");
 const regexEmail = new RegExp("^[A-Za-zA-Z0-9.-_]+[@]{1}[A-Za-zA-Z0-9.-_]+[.]{1}[A-Za-z]{2,10}$");
 
+
+//-- déclaration des variables pour vérifier les élements de manière dynamique --// 
 let checkFirstName = false;
 let checkLastName = false;
 let checkAddress = false;
@@ -238,7 +241,7 @@ function email(value) {
   }
 }
 
-
+// --fonction qui va servier a vérifier les élements du formulaire et les valider via nos variables et fonctions plus haut --// 
 function validityForm() {
   // Verifier que le panier n'est pas vide 
   if (document.getElementById("cart__items") != null) {
@@ -321,12 +324,15 @@ const sendToServer = function () {
       for (let i = 0; i < localStorageProduct.length; i++) {
         products.push(localStorageProduct[i].id);
       }
-
+      // création de l'objet qui va reprendre les infos contacts et produits 
       let data = { contact, products }
 
-      // fecth de l'url de l'api et utilisation du POST 
+      //-- fecth de l'url de l'api et utilisation du POST --//
+      //-- Le résultat de la reqyete est traitée, si la réponse est conforme, la réponse est convertie 
+      //-- en objet javascript. On renvoie l'objet pour extraire la valeur de l'id de commande, si une erreur apparait, elle est affiché dans la console --//
       fetch('http://localhost:3000/api/products/order', {
         method: "POST",
+        //-- Informe le serveur de type de donnée qu on attend. On attend une chaine de caractères JSON.On s'assure que le serveur comprend ce qu'on envoie pour renvoyer les bonnes doénnes
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
@@ -342,6 +348,7 @@ const sendToServer = function () {
           let orderId = value.orderId;
           console.log(orderId);
           alert("Votre commande a bien été enregistrée")
+          //-- permet de rediriger l'utilisateur vers une nouvelle page pour avoir le numéro ID sur la page confirmation --// 
           window.location.href = `confirmation.html?orderId=${orderId}`;
         })
         .catch(function (error) {

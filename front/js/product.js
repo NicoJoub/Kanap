@@ -1,15 +1,3 @@
-/*
-étape a suivre :
-Étape 1: récupéré l'id qui se trouve dans l'url 
-etape 2: faire une fonction getProduct(id) qui va récupéré via l'API un seul produit
-etape 3: faire une fonction displayInfo() qui va afficher les information du produit sur la page (voir code commenté sur html)
-étape 4: faire un fonction submitProduct() qui va vérifié les informations selectionné (affiché erreur si couleur ou qte invalide)
-étape 5(dans la focntion submit): si il n'y a aucun erreur, créer un objet, contenant l'id, la couleur et la qte
-étape 5.1: si le local storage n'ets aps existant (= null), ont créer une nouvelle liste ([]) et on insére l'objet dans la liste (.push) puis ont enregistre la liste dans le localStorage
-étape 5.2: si localStorage existe, on va vérifié si notre produit n'est oaps déja dedasn (foreach(), if(id + couleur identique))
-étape 5.2.1: si id et couleur identique trouvé, ont incrémente la qté (qte existante + nouvelle qté)
-étape 5.2.2: si on ne trouve pas, on insére un nouveau produit dans la liste (.push)
-*/
 
 //--------------------- ETAPE ---------------------//
 
@@ -21,7 +9,7 @@ const idProduct = url.get("id") // retourne la valeur associée au parametre don
 //--------------------- ETAPE 2 : Fonction getProduct(Id) ---------------------//
 //--------------------- Pour récupérer dans l'API, un seul produit -----------//
 async function getProduct(id) {
-    //on récupere les données de l'API pour un seul produit 
+    //on récupere les données de l'API pour un seul produit le await, permet d'attendre sa réponse, sinon ont aura une promesse de réponse et non pas les infos
     let response = await fetch(`http://localhost:3000/api/products/${id}`);
     if (response.ok) {
         return response.json();
@@ -74,7 +62,7 @@ displayInfo();
 
 //-- Fonction au clic du bouton Ajouter au panier --// 
 function submitProduct(productChoice) {
-    // -- Creation de la variable pour le local storage --//
+    // -- Creation de la variable pour le local storage, permet de convertir les réponses de requetes en objets javascript --//
     let panier = JSON.parse(localStorage.getItem("panier"));
 
     if (productChoice.color === "") {
@@ -92,11 +80,12 @@ function submitProduct(productChoice) {
             panier = [];
             panier.push(productChoice);
             alert("Votre article a bien été ajouté dans votre panier")
+            // -- Permet d enregistrer les données pour etre lu ulterieurement et envoyer dans le localstorage --//
             localStorage.setItem("panier", JSON.stringify(panier))
         } else {
             // créer une variable de recherche
             let isNewItem = true;
-
+            //-- pour chaque element dans le panier si deja présent, vérifier la quantité sinon l'ajouter --//
             panier.forEach(element => {
                 if (element.id === productChoice.id &&
                     element.color === productChoice.color) {
@@ -111,6 +100,7 @@ function submitProduct(productChoice) {
                     }
                 }
             })
+            //-- Si nouveau canapé, l'ajouter auu localstorage--//
             if (isNewItem) {
                 panier.push(productChoice);
                 alert("Votre article a bien été ajouté dans votre panier")

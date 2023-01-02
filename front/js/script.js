@@ -4,7 +4,7 @@
 //on créer une fonction que l'on décide d'appeler getProduct pour récupéré la liste des produits
 //fonction async : permet d'attendre sa réponse, car le javascript est un language qui fait tout en même temps
 async function getProducts() {
-    //on récupére les données de l'API via un fetch, le await, permet d'attendre sa réponse, sinon ont aura une promesse de répons et non pas les infos
+    //on récupére les données de l'API via un fetch, le await, permet d'attendre sa réponse, sinon ont aura une promesse de réponse et non pas les infos
     let response = await fetch("http://localhost:3000/api/products");
     //on test si la variable ok présente avec fetch est égale a True, ce qui veut dire que la requete n'a pas eu d'erreur
     if (response.ok) {
